@@ -23,11 +23,14 @@ var shared = []string{"AGENTS.md", "config.toml", "hooks.json", "skills", "rules
 // Item nguồn chưa có thì tạo dạng thư mục (còn lại tạo file rỗng).
 var sharedDirs = map[string]bool{"skills": true, "rules": true, "plugins": true, "prompts": true, "sessions": true}
 
+const aliasFlags = "--sandbox workspace-write --ask-for-approval on-request"
+
 const usage = `hcx — Codex account switcher
 
   hcx add <name>            tạo/đồng bộ ~/.codex-<name>, symlink shared từ ~/.codex
   hcx list                  liệt kê account (* = đang active theo $CODEX_HOME)
   hcx env <name>            in lệnh export, dùng: eval "$(hcx env <name>)"
+  hcx alias [name]          in alias zsh gợi ý, dùng: eval "$(hcx alias)"
   hcx quota [name]          xem quota 5h/7 ngày (không name = mọi account)
   hcx <name> [args...]      chạy codex với account <name>`
 
@@ -77,6 +80,11 @@ func main() {
 			die("usage: hcx env <name>")
 		}
 		err = cmdEnv(args[1])
+	case "alias":
+		if len(args) > 2 {
+			die("usage: hcx alias [name]")
+		}
+		err = cmdAlias(args[1:])
 	case "quota":
 		err = cmdQuota(args[1:])
 	default:
@@ -220,6 +228,28 @@ func cmdEnv(name string) error {
 		return err
 	}
 	fmt.Printf("export CODEX_HOME=%q CODEX_ACCOUNT=%q\n", dir, name)
+	return nil
+}
+
+func aliasLine(name string) string {
+	aliasName := "codex"
+	if name != "main" {
+		aliasName = "codex-" + name
+	}
+	return fmt.Sprintf("alias %s='hcx %s %s'", aliasName, name, aliasFlags)
+}
+
+func cmdAlias(names []string) error {
+	if len(names) == 0 {
+		for _, name := range accounts() {
+			fmt.Println(aliasLine(name))
+		}
+		return nil
+	}
+	if _, err := resolve(names[0]); err != nil {
+		return err
+	}
+	fmt.Println(aliasLine(names[0]))
 	return nil
 }
 

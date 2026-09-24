@@ -23,6 +23,7 @@ hcx main resume --last    # args sau tên account chuyển thẳng cho codex
 hcx list                  # * = account theo $CODEX_HOME hiện tại
 hcx quota [name]          # biểu đồ quota 5h/7 ngày + giờ reset (không name = mọi account)
 eval "$(hcx env work)"    # set env cho shell hiện tại
+eval "$(hcx alias)"       # nạp alias cho shell hiện tại (hoặc: hcx alias >> ~/.zshrc)
 ```
 
 `hcx quota` gọi `https://chatgpt.com/backend-api/wham/usage` bằng token trong `auth.json` (không tự refresh;
@@ -35,11 +36,11 @@ main       a@x.com [plus]
   7d         █████████████░░░░░░░  66%  reset Mon 17:00
 ```
 
-Alias gợi ý trong `~/.zshrc`:
+Alias gợi ý trong `~/.zshrc`: thêm bằng `hcx alias >> ~/.zshrc` hoặc nạp bằng `eval "$(hcx alias)"`.
 
 ```sh
 alias codex='hcx main --sandbox workspace-write --ask-for-approval on-request'
-alias codex-w='hcx work --sandbox workspace-write --ask-for-approval on-request'
+alias codex-work='hcx work --sandbox workspace-write --ask-for-approval on-request'
 ```
 
 `$CODEX_ACCOUNT` được set khi chạy, statusline/hook có thể đọc để hiện account.
