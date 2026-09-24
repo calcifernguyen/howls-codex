@@ -95,3 +95,38 @@ func TestBar(t *testing.T) {
 		t.Errorf("bar(90) màu = %q", got)
 	}
 }
+
+func TestAliasLine(t *testing.T) {
+	if got := aliasLine("main"); got != "alias codex='hcx main --sandbox workspace-write --ask-for-approval on-request'" {
+		t.Errorf("aliasLine(main) = %q", got)
+	}
+	if got := aliasLine("work"); got != "alias codex-work='hcx work --sandbox workspace-write --ask-for-approval on-request'" {
+		t.Errorf("aliasLine(work) = %q", got)
+	}
+}
+
+func TestCmdAlias(t *testing.T) {
+	h := t.TempDir()
+	t.Setenv("HOME", h)
+
+	if err := cmdAlias([]string{"nope"}); err == nil || !strings.Contains(err.Error(), "chưa có") {
+		t.Errorf("cmdAlias(nope) want error containing 'chưa có', got %v", err)
+	}
+	if err := cmdAlias([]string{"bad/name"}); err == nil || !strings.Contains(err.Error(), "tên không hợp lệ") {
+		t.Errorf("cmdAlias(bad/name) want invalid name error, got %v", err)
+	}
+	if err := cmdAlias(nil); err != nil {
+		t.Errorf("cmdAlias(nil) error: %v", err)
+	}
+
+	os.MkdirAll(filepath.Join(h, ".codex"), 0o755)
+	if err := cmdAdd("work"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmdAlias([]string{"work"}); err != nil {
+		t.Errorf("cmdAlias(work) error: %v", err)
+	}
+	if err := cmdAlias([]string{"main"}); err != nil {
+		t.Errorf("cmdAlias(main) error: %v", err)
+	}
+}
