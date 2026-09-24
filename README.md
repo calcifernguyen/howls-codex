@@ -38,7 +38,8 @@ main       a@x.com [plus]
 Alias gợi ý trong `~/.zshrc`:
 
 ```sh
-alias codex-w='hcx work'
+alias codex='hcx main --sandbox workspace-write --ask-for-approval on-request'
+alias codex-w='hcx work --sandbox workspace-write --ask-for-approval on-request'
 ```
 
 `$CODEX_ACCOUNT` được set khi chạy, statusline/hook có thể đọc để hiện account.
