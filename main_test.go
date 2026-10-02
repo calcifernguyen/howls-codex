@@ -97,7 +97,7 @@ func TestBar(t *testing.T) {
 }
 
 func TestAliasLine(t *testing.T) {
-	if got := aliasLine("main"); got != "alias codex='hcx main --sandbox workspace-write --ask-for-approval on-request'" {
+	if got := aliasLine("main"); got != "alias codex='hcx --sandbox workspace-write --ask-for-approval on-request'" {
 		t.Errorf("aliasLine(main) = %q", got)
 	}
 	if got := aliasLine("work"); got != "alias codex-work='hcx work --sandbox workspace-write --ask-for-approval on-request'" {
@@ -128,5 +128,27 @@ func TestCmdAlias(t *testing.T) {
 	}
 	if err := cmdAlias([]string{"main"}); err != nil {
 		t.Errorf("cmdAlias(main) error: %v", err)
+	}
+}
+
+func TestDefault(t *testing.T) {
+	h := t.TempDir()
+	t.Setenv("HOME", h)
+	os.MkdirAll(filepath.Join(h, ".codex"), 0o755)
+
+	if got := defaultName(); got != "main" {
+		t.Errorf("chưa set: defaultName = %q, want main", got)
+	}
+	if err := cmdDefault([]string{"nope"}); err == nil || !strings.Contains(err.Error(), "chưa có") {
+		t.Errorf("cmdDefault(nope) want 'chưa có', got %v", err)
+	}
+	if err := cmdAdd("work"); err != nil {
+		t.Fatal(err)
+	}
+	if err := cmdDefault([]string{"work"}); err != nil {
+		t.Fatal(err)
+	}
+	if got := defaultName(); got != "work" {
+		t.Errorf("defaultName = %q, want work", got)
 	}
 }

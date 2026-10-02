@@ -20,6 +20,8 @@ go build -o ~/.local/bin/hcx .
 hcx add work              # tạo/đồng bộ ~/.codex-work; item thật cũ -> <item>.hcx-bak-<unix>
 hcx work                  # chạy codex bằng account work (lần đầu: hcx work login)
 hcx main resume --last    # args sau tên account chuyển thẳng cho codex
+hcx default work          # set account mặc định (lưu file .hcx-default); không tên = in default
+hcx -c                    # không tên / args bắt đầu bằng - => chạy account mặc định
 hcx list                  # * = account theo $CODEX_HOME hiện tại
 hcx quota [name]          # biểu đồ quota 5h/7 ngày + giờ reset (không name = mọi account)
 eval "$(hcx env work)"    # set env cho shell hiện tại
@@ -39,7 +41,7 @@ main       a@x.com [plus]
 Alias gợi ý trong `~/.zshrc`: thêm bằng `hcx alias >> ~/.zshrc` hoặc nạp bằng `eval "$(hcx alias)"`.
 
 ```sh
-alias codex='hcx main --sandbox workspace-write --ask-for-approval on-request'
+alias codex='hcx --sandbox workspace-write --ask-for-approval on-request'
 alias codex-work='hcx work --sandbox workspace-write --ask-for-approval on-request'
 ```
 
